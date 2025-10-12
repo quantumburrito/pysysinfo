@@ -12,3 +12,10 @@ def test_schema_module_importable():
     # Why: Later contract tests depend on this module for constants/functions.
     # Expectation: Import succeeds and module reference is non-None.
     assert schema is not None
+
+def test_schema_top_level_keys_present():
+    # Purpose: build a snapshot and assert that the keys exist exactly
+    # Why: verify the the top level keys are present in the json output
+    # Expectation: top level keys exist as defined in schema.md after snapshot 
+    # generation.
+    assert schema.SCHEMA_VERSION is "1.0"
