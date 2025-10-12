@@ -22,3 +22,10 @@ license-files = ["LICEN[CS]E*"]
 [project.urls]
 Homepage = "https://github.com/quantumburrito/pysysinfo"
 Issues = "https://github.com/quantumburrito/pysysinfo"
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q"
+testpaths = [
+    "tests",
+]
