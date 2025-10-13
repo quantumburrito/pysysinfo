@@ -60,8 +60,7 @@
 ## 4) `cpu` object
 
 | Field                 | Type    | Units / Range | Notes                                                     |
-| --------------------- | ------- | ------------- | --------------------------------------------------------- |
-| `logical_cores`       | integer | —             | ≥ 1.                                                      |
+| --------------------- | ------- | ------------- | ------------------ `logical_cores`       | integer | —             | ≥ 1.                                                      |
 | `physical_cores`      | integer | —             | ≥ 1; may equal logical on some systems.                   |
 | `utilization_percent` | number  | 0–100         | Instantaneous sample. Document sampling window in README. |
 | `load_avg_1m`         | number  | —             | Nullable if OS does not provide.                          |
