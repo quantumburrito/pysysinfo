@@ -1,12 +1,21 @@
-"""Contract: the schema module must be importable for tests to run.
+"""Contract tests for the schema layer
 
-This is a smoke test that ensures the package exposes `pysysinfo.schema`.
-If this import fails, downstream contract tests cannot execute.
+These are contract-level checks:
+- the schema module must be importable;
+- a snapshot must expose exactly the documented top-level keys;
+- generated snapshots must be JSON objects with the correct types/units at the top level.
+
+Notes:
+- Compare Python dicts (or JSON-decoted objects), not the serialized strings
+  string formating/ordering can cause brittle tests
 """
 
-import pysysinfo.schema as schema
+
 import json
 import time
+from datetime import datetime, timezone
+
+import pysysinfo.schema as schema
 
 def test_schema_module_importable():
     # Purpose: Verify the schema module exists and can be imported.
@@ -15,11 +24,38 @@ def test_schema_module_importable():
     assert schema is not None
 
 def test_schema_top_level_keys_present():
-    # Purpose: build a snapshot and assert that the keys exist exactly
-    # Why: verify the the top level keys are present in the json output
-    # Expectation: top level keys exist as defined in schema.md after snapshot 
+    # Purpose: Assert the snapshot exposes exactly the documented top-level keys.
+    # Why: vPrevent silent drift (missing/extra keys) in the public JSON contract.
+    # Expectation: Keys match schema.md exactly; values have the expected container types.
     # generation.
-    schema_version = schema.schema_version
+    expected_keys = {
+        "schema_version",
+        "timestamp_iso",
+        "timestamp_unix",
+        "platform",
+        "cpu",
+        "memory",
+        "disks",
+        "processes"
+    }
+
+    # If make_empty_snapshot returns a JSON string, decode to a dict first
+    raw = schema.make_empty_snapshot(schema.schema_version)
+    obj = json.loads(raw) if isinstance(raw, str) else raw
+
+    # Exact key set
+    assert set(obj.keys()) == expected_keys
+
+    # Top-level container/type sanity checks (don't validate inner fields here)
+    assert isinstance(obj["schema_version"], str)
+    assert isinstance(obj["timestamp_iso"], str)
+    assert isinstance(obj["timestamp_unix"], int)
+    assert isinstance(obj["platform"], dict)
+    assert isinstance(obj["cpu"], dict)
+    assert isinstance(obj["memory"], dict)
+    assert isinstance(obj["disks"], list)
+    assert isinstance(obj["processes"], list)
+
 
     test_empty_schema = {
         "schema_version": schema_version,
