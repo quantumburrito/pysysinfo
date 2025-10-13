@@ -5,6 +5,7 @@ If this import fails, downstream contract tests cannot execute.
 """
 
 import pysysinfo.schema as schema
+import json
 
 
 def test_schema_module_importable():
@@ -18,4 +19,17 @@ def test_schema_top_level_keys_present():
     # Why: verify the the top level keys are present in the json output
     # Expectation: top level keys exist as defined in schema.md after snapshot 
     # generation.
-    assert schema.SCHEMA_VERSION is "1.0"
+    schema_version = schema.schema_version
+
+    test_empty_schema = {
+        "schema_version": schema_version,
+        "timestamp_iso": "",
+        "timestamp_unix": 0,
+        "platform": {},
+        "cpu": {},
+        "memory": {},
+        "disks": [],
+        "processes": [],
+    }
+    
+    assert schema.make_empty_snapshot(schema.schema_version) == json.dumps(test_empty_schema)
